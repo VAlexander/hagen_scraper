@@ -3,6 +3,11 @@ import scrapy
 from scrapy.http import FormRequest
 from hagen.items import HagenItem
 
+try:
+    import login_info
+except ImportError:
+    raise ImportError("You don't have login and password specified")
+
 class MainSpider(scrapy.Spider):
 	name = "main"
 	allowed_domains = ["hagendirect.com", "ecsrv.com"]
@@ -10,8 +15,8 @@ class MainSpider(scrapy.Spider):
 		'https://www.ecsrv.com/PrivateClientLogin.aspx?No=hagenusa',
 	)
 	
-	hagen_username = "ann@meritlife.com"
-	hagen_password = "annchong"
+	hagen_username = login_info.hagen_username
+	hagen_password = login_info.hagen_password
 	
 	categories_xpath = "//ul[@class='navigation']/li[4]/*//a"
 	products_xpath = "//div[@class='prod_name']/a"
