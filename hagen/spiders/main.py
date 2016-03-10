@@ -6,7 +6,9 @@ from hagen.items import HagenItem
 try:
     import login_info
 except ImportError:
-    raise ImportError("You don't have login and password specified")
+    raise ImportError("You don't have login and password specified. \
+	Create file 'login_info.py' with strings 'hagen_username' and 'hagen_password' \
+	in spiders folder.")
 
 class MainSpider(scrapy.Spider):
 	name = "main"
