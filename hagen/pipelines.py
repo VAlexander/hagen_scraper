@@ -24,15 +24,12 @@ class HagenPipeline(object):
 		crawler.signals.connect(pipeline.spider_closed, signals.spider_closed)
 		return pipeline
 	
-	## When spider opened, prepare csv exporter
+	## When spider opened, prepare txt exporter
 	def spider_opened(self, spider):
 		file = open('results.txt', 'w+b')
 		self.files[spider] = file
 		self.exporter = file
-		#self.exporter.fields_to_export = ["title", "upc", "part_number", "msrp", "your_cost", "description", "breadcrumbs", "image_path"]
-		#self.exporter.encoding = "utf-8"
-		#self.exporter.start_exporting()
-	
+			
 	## When spider closed, finish exporting and close the file
 	def spider_closed(self, spider):
 		self.exporter.close()
@@ -49,16 +46,19 @@ class HagenPipeline(object):
 			self.upcs_seen.add(item.get('upc'))
 			
 		try:
+			## Get the price from the field
 			item["msrp"] = item["msrp"].split("$")[-1].strip()
 		except:
 			pass
 			
 		try:
+			## Get the price from the field
 			item["your_cost"] = item["your_cost"].split("$")[-1].strip()
 		except:
 			pass
 			
 		try:
+			## Modify image path
 			if item["image_path"] != "No image":
 				image_extension = item["image_path"].split(".")[-1]
 				item["image_path"] = "img/%s.%s" % (item["upc"], image_extension)
@@ -85,10 +85,20 @@ class HagenPipeline(object):
 			except:
 				item[f] = ""
 				
-		self.exporter.write("\"{0}\" \"{1}\" \"{2}\" \"{3}\" \"{4}\" \"{5}\" \"{6}\" \"{7}\"\n".format(item["title"],item["upc"],item["part_number"],item["msrp"],item["your_cost"],item["description"],item["breadcrumbs"],item["image_path"]))
+		self.exporter.write("\"{0}\" \"{1}\" \"{2}\" \"{3}\" \"{4}\" \"{5}\" \"{6}\" \"{7}\"\n".format(
+			item["title"],
+			item["upc"],
+			item["part_number"],
+			item["msrp"],
+			item["your_cost"],
+			item["description"],
+			item["breadcrumbs"],
+			item["image_path"])
+			)
 		
 		return item
 
+		
 ## Image pipeline			
 class HagenImagesPipeline(ImagesPipeline):
 	## On recieving item yield its image_url field to new request
